@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
+using System.Threading.Tasks;
 
 namespace mandelbrot_set
 {
@@ -9,6 +11,8 @@ namespace mandelbrot_set
         private double _scale;
         private (int x, int y) _resolution;
         private (double x, double y) _offset;
+        double xOffs = 0;
+        double yOffs = 0;
         private readonly double[,] _image;
 
         private double GetIterationCount(Complex c)
@@ -28,18 +32,68 @@ namespace mandelbrot_set
             return n + 1 - Math.Log(Math.Log2(z.Magnitude));
         }
 
-        public double[,] Generate()
+        private double[,] GenerateImageTask(int startIndex, int endIndex)
         {
-            double xOffs = _resolution.x / 2 + _offset.x;
-            double yOffs = _resolution.y / 2 + _offset.y;
+            double[,] array = new double[_resolution.x, endIndex - startIndex];
             for (int x = 0; x < _resolution.x; x++)
             {
-                for (int y = 0; y < _resolution.y; y++)
+                for (int y = startIndex; y < endIndex; y++)
                 {
                     Complex num = new Complex((x - xOffs) * _scale, (y - yOffs) * _scale);
-                    _image[x, y] = GetIterationCount(num);
+                    array[x, y - startIndex] = GetIterationCount(num);
                 }
             }
+            return array;
+        }
+
+        private void RunTasks(int count)
+        {
+            int taskSize = _resolution.y / count;
+
+            List<Task<double[,]>> tasks = new List<Task<double[,]>>();
+            List<(int, int)> indices = new List<(int, int)>();
+
+            //start the tasks
+            for(int i = 0; i < count; i++)
+            {
+                int start = i * taskSize;
+                int end = start + taskSize;
+                if(end + taskSize > _resolution.y)
+                {
+                    end = _resolution.y;
+                }
+                var newTask = Task.Run(() => GenerateImageTask(start, end));
+                Console.WriteLine($"Worker thread ID: {newTask.Id}\t{(end - start) *_resolution.x} pixels");
+                tasks.Add(newTask);
+                indices.Add((start, end));
+            }
+
+            //put the results back together
+            for(int j = 0; j < tasks.Count; j++)
+            {
+                double[,] result = tasks[j].Result;
+                var range = indices[j];
+                for(int x = 0; x < _resolution.x; x++)
+                {
+                    for(int y = range.Item1; y < range.Item2; y++)
+                    {
+                        _image[x, y] = result[x, y - range.Item1];
+                    }
+                }
+            }
+        }
+
+        public double[,] Generate(int threadCount)
+        {
+            xOffs = _resolution.x / 2 + _offset.x;
+            yOffs = _resolution.y / 2 + _offset.y;
+
+            var timer = System.Diagnostics.Stopwatch.StartNew();
+
+            RunTasks(threadCount);
+
+            timer.Stop();
+            Console.WriteLine($"Finished in {timer.ElapsedMilliseconds} milliseconds.");
 
             return _image;
         }
