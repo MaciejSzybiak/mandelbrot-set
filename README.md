@@ -18,8 +18,13 @@ This console app can be used to generate pictures of the Mandelbrot set. It uses
 
 ##### Example pictures
 * Generated with default settings
+
 <img src="docs/example1.bmp" width="400">
+
 * Generated with `--xoffset 1.25 --yoffset 0.05 --scale 200` settings
+
 <img src="docs/example2.bmp" width="400">
+
 * Generated with `--xoffset 1 --max-iter 25 --scale 2` settings
+
 <img src="docs/example3.bmp" width="400">
