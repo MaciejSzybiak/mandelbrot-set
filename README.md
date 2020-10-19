@@ -2,7 +2,7 @@
 
 This console app can be used to generate pictures of the Mandelbrot set. It uses the escape time algorithm which is executed in multiple threads for faster image generation.
 
-##### Command line options
+#### Command line options
 ```
   --output                 The name of the output image. [default: mandelbrot]
   --height                 The height of the image in pixels. [default: 1000]
@@ -18,7 +18,7 @@ This console app can be used to generate pictures of the Mandelbrot set. It uses
   -?, -h, --help           Show help and usage information
   ```
 
-##### Example pictures
+#### Example pictures
 * Generated with default settings
 
 <img src="docs/example1.bmp" width="400">
@@ -30,3 +30,28 @@ This console app can be used to generate pictures of the Mandelbrot set. It uses
 * Generated with `--xoffset 1 --max-iter 25 --scale 2` settings
 
 <img src="docs/example3.bmp" width="400">
+
+#### Benchmark
+The built-in benchmark can be used to measure generation speed for various thread counts. Use the `--benchmark` option to launch it. The `--threads` option is not available in this mode.
+
+###### Example benchmark output:
+```
+Benchmarking...
+Threads |  Average duration
+----------------------------
+  4096  |       13ms
+  2048  |       5ms
+  1024  |       2ms
+  512   |       60ms
+  256   |       104ms
+  128   |       107ms
+  64    |       113ms
+  32    |       112ms
+  24    |       123ms
+  16    |       164ms
+  12    |       183ms
+  8     |       240ms
+  4     |       355ms
+  2     |       391ms
+  1     |       782ms
+ ```
