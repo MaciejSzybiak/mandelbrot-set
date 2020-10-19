@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace mandelbrot_set
 {
-    public class EscapeTimeGenerator
+    class EscapeTimeGenerator
     {
         private int _maxIterations;
         private double _scale;
@@ -105,6 +105,15 @@ namespace mandelbrot_set
             _scale = 1/scale;
             _offset = offset;
             _image = new double[resolution.x, resolution.y];
+        }
+
+        public EscapeTimeGenerator(GenerationInfo info)
+        {
+            _maxIterations = info.maxIterations;
+            _resolution = info.resolution;
+            _scale = 1 / info.scale;
+            _offset = info.offset;
+            _image = new double[_resolution.x, _resolution.y];
         }
     }
 }
