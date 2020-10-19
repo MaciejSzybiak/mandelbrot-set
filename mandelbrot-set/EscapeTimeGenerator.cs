@@ -14,6 +14,7 @@ namespace mandelbrot_set
         double xOffs = 0;
         double yOffs = 0;
         private readonly double[,] _image;
+        private bool _verbose;
 
         private double GetIterationCount(Complex c)
         {
@@ -63,7 +64,10 @@ namespace mandelbrot_set
                     end = _resolution.y;
                 }
                 var newTask = Task.Run(() => GenerateImageTask(start, end));
-                Console.WriteLine($"Worker thread ID: {newTask.Id}\t{(end - start) *_resolution.x} pixels");
+                if (_verbose)
+                {
+                    Console.WriteLine($"Worker thread ID: {newTask.Id}\t{(end - start) *_resolution.x} pixels");
+                }
                 tasks.Add(newTask);
                 indices.Add((start, end));
             }
@@ -83,7 +87,7 @@ namespace mandelbrot_set
             }
         }
 
-        public double[,] Generate(int threadCount)
+        public double[,] Generate(int threadCount, out long milliseconds)
         {
             xOffs = _resolution.x / 2 + _offset.x;
             yOffs = _resolution.y / 2 + _offset.y;
@@ -93,27 +97,19 @@ namespace mandelbrot_set
             RunTasks(threadCount);
 
             timer.Stop();
-            Console.WriteLine($"Finished in {timer.ElapsedMilliseconds} milliseconds.");
 
+            milliseconds = timer.ElapsedMilliseconds;
             return _image;
         }
 
-	    public EscapeTimeGenerator(int maxIterations, double scale, (int x, int y) resolution, (double x, double y) offset)
-        {
-            _maxIterations = maxIterations;
-            _resolution = resolution;
-            _scale = 1/scale;
-            _offset = offset;
-            _image = new double[resolution.x, resolution.y];
-        }
-
-        public EscapeTimeGenerator(GenerationInfo info)
+        public EscapeTimeGenerator(GenerationInfo info, bool verbose)
         {
             _maxIterations = info.maxIterations;
             _resolution = info.resolution;
             _scale = 1 / info.scale;
             _offset = info.offset;
             _image = new double[_resolution.x, _resolution.y];
+            _verbose = verbose;
         }
     }
 }

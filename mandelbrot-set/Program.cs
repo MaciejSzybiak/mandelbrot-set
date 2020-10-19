@@ -18,9 +18,11 @@ namespace mandelbrot_set
         /// <param name="xoffset">Image x offset from the center of the complex plane.</param>
         /// <param name="yoffset">Image y offset from the center of the complex plane.</param>
         /// <param name="threads">The suggested worker threads count.</param>
+        /// <param name="benchmark">Runs the built-in benchmark.</param>
+        /// <param name="verbose">Set more detailed output.</param>
         static void Main(string output = "mandelbrot", int height = 1000, int width = 1000,
             int scale = 1, int maxIter = 100, double xoffset = 0.5, double yoffset = 0,
-            int threads = 8)
+            int threads = 8, bool benchmark = false, bool verbose = false)
         {
             scale = scale * width / 3; //make sure the entire fractal fits on screen when the scale is set to 1
             xoffset *= scale;
@@ -28,16 +30,26 @@ namespace mandelbrot_set
             threads = Math.Clamp(threads, 1, 100);
             var generationInfo = new GenerationInfo(height, width, scale, maxIter, xoffset, yoffset);
 
-            double[,] img = GetGeneratedImage(generationInfo, threads);
-            WriteImageFile(img, generationInfo, GetOutputFilePath(output));
+            if (benchmark)
+            {
+                RunBenchmark(generationInfo);
+            }
+            else
+            {
+                double[,] img = GetGeneratedImage(generationInfo, threads, verbose);
+                WriteImageFile(img, generationInfo, GetOutputFilePath(output));
+            }
         }
 
-        static double[,] GetGeneratedImage(GenerationInfo generationInfo, int threads)
+        static double[,] GetGeneratedImage(GenerationInfo generationInfo, int threads, bool verbose)
         {
             Console.WriteLine("Generating mandelbrot set...");
 
-            EscapeTimeGenerator gen = new EscapeTimeGenerator(generationInfo);
-            return gen.Generate(threads);
+            EscapeTimeGenerator gen = new EscapeTimeGenerator(generationInfo, verbose);
+            var img = gen.Generate(threads, out long milliseconds);
+            Console.WriteLine($"Finished in {milliseconds} milliseconds.");
+
+            return img;
         }
 
         static string GetOutputFilePath(string output)
@@ -53,6 +65,12 @@ namespace mandelbrot_set
             imageGenerator.BitmapFromIntArray(image, generationInfo.resolution).Save($"{name}");
 
             Console.WriteLine("\tDone.");
+        }
+
+        static void RunBenchmark(GenerationInfo generationInfo)
+        {
+            Benchmark benchmark = new Benchmark();
+            benchmark.RunBenchmark(generationInfo);
         }
     }
 }

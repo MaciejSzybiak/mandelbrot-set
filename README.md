@@ -12,6 +12,8 @@ This console app can be used to generate pictures of the Mandelbrot set. It uses
   --xoffset                Image x offset from the center of the complex plane. [default: 0,5]
   --yoffset                Image y offset from the center of the complex plane. [default: 0]
   --threads                The suggested worker threads count. [default: 8]
+  --benchmark              Runs the built-in benchmark.
+  --verbose                Set more detailed output.
   --version                Show version information
   -?, -h, --help           Show help and usage information
   ```
