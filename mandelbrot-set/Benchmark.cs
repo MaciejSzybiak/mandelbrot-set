@@ -19,6 +19,10 @@ namespace mandelbrot_set
             Console.WriteLine("----------------------------");
             for(int i = threadCounts.Length - 1; i >= 0; i--)
             {
+                if (threadCounts[i] > generationInfo.resolution.y)
+                {
+                    continue;
+                }
                 long sum = 0;
                 Console.Write($"  {threadCounts[i]}");
                 for (int j = 0; j < benchmarkCount; j++)

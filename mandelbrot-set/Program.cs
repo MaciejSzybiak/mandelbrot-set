@@ -27,7 +27,7 @@ namespace mandelbrot_set
             scale = scale * width / 3; //make sure the entire fractal fits on screen when the scale is set to 1
             xoffset *= scale;
             yoffset *= scale;
-            threads = Math.Clamp(threads, 1, 100);
+            threads = Math.Clamp(threads, 1, height);
             var generationInfo = new GenerationInfo(height, width, scale, maxIter, xoffset, yoffset);
 
             if (benchmark)

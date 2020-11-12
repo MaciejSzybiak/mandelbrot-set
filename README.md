@@ -37,21 +37,22 @@ The built-in benchmark can be used to measure generation speed for various threa
 ###### Example benchmark output:
 ```
 Benchmarking...
+
 Threads |  Average duration
 ----------------------------
-  4096  |       13ms
-  2048  |       5ms
-  1024  |       2ms
-  512   |       60ms
-  256   |       104ms
-  128   |       107ms
-  64    |       113ms
-  32    |       112ms
-  24    |       123ms
-  16    |       164ms
-  12    |       183ms
-  8     |       240ms
-  4     |       355ms
-  2     |       391ms
-  1     |       782ms
+  4096  |       425ms
+  2048  |       339ms
+  1024  |       361ms
+  512   |       340ms
+  256   |       325ms
+  128   |       361ms
+  64    |       481ms
+  32    |       547ms
+  24    |       547ms
+  16    |       585ms
+  12    |       548ms
+  8     |       557ms
+  4     |       731ms
+  2     |       1035ms
+  1     |       1857ms
  ```
